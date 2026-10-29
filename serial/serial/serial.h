@@ -1338,6 +1338,38 @@ WDF_DECLARE_CONTEXT_TYPE_WITH_NAME(SERIAL_INTERRUPT_CONTEXT,
 #define SERIAL_FLAGS_LEGACY_ENUMED          0x8L
 
 
+//
+// ExAllocatePool2 needs Windows 10 2004. This keeps its behavior (zeroed,
+// non-paged, optionally quota-charged, NULL on failure) on older Windows 10,
+// such as the ARM32 builds.
+//
+__inline
+PVOID
+SerialAllocateNonPagedPool (
+    IN  SIZE_T  NumberOfBytes,
+    IN  BOOLEAN ChargeQuota
+    )
+{
+    PVOID buffer;
+
+    if (ChargeQuota) {
+        buffer = ExAllocatePoolWithQuotaTag(
+                     (POOL_TYPE)(NonPagedPoolNx | POOL_QUOTA_FAIL_INSTEAD_OF_RAISE),
+                     NumberOfBytes,
+                     POOL_TAG
+                     );
+    } else {
+        buffer = ExAllocatePoolWithTag(NonPagedPoolNx, NumberOfBytes, POOL_TAG);
+    }
+
+    if (buffer != NULL) {
+        RtlZeroMemory(buffer, NumberOfBytes);
+    }
+
+    return buffer;
+}
+
+
 __inline
 UCHAR
 SerialReadPortUChar (

@@ -22,11 +22,11 @@ signature="$CHICAGO$"
 Class=Ports
 ClassGuid={4D36E978-E325-11CE-BFC1-08002BE10318}
 Provider=%ProviderString%
-CatalogFile=KmdfSamples.cat
+CatalogFile=wdfserial.cat
 PnpLockdown = 1
 
 [DestinationDirs]
-DefaultDestDir  = 13
+DefaultDestDir  = 12
 
 [SourceDisksFiles]
 wdfserial.sys=1
@@ -41,9 +41,9 @@ wdfserial.sys=1
 ExcludeFromSelect=*
 
 [Manufacturer]
-%ManufacturerString%=MSFT,NT$ARCH$.10.0...16299
+%ManufacturerString%=MSFT,NT$ARCH$
 
-[MSFT.NT$ARCH$.10.0...16299]
+[MSFT.NT$ARCH$]
 ; DisplayName           Section           DeviceId
 ; -----------           -------           --------
 %PNP0500.DevDesc%=       Serial_Inst,      *PNP0500, *PNP0501 ; Communications Port
@@ -64,7 +64,7 @@ DisplayName    = %Serial.SVCDESC%
 ServiceType    = 1                  ; SERVICE_KERNEL_DRIVER
 StartType      = 3                  ; SERVICE_DEMAND_START
 ErrorControl   = 1                  ; SERVICE_ERROR_NORMAL
-ServiceBinary  = %13%\wdfserial.sys                            
+ServiceBinary  = %12%\wdfserial.sys                            
 
 [Serial_Inst.NT.HW]
 Addreg=Serial_Inst.NT.HW.AddReg
@@ -89,8 +89,8 @@ KmdfService = Serial, Serial_wdfsect
 KmdfLibraryVersion = $KMDFVERSION$
 
 [Strings]
-ProviderString = "TODO-Set-Provider"
-ManufacturerString = "TODO-Set-Manufacturer"
+ProviderString = "WDK serial sample (QEMU ARM32 build)"
+ManufacturerString = "(Standard port types)"
 Serial.SVCDESC = "WDF Serial driver"
 PNP0500.DevDesc = "Communications Port"
 PNP0501.DevDesc = "Communications Port"

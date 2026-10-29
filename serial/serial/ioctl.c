@@ -1297,11 +1297,7 @@ Return Value:
             }
 
             reqContext->Type3InputBuffer =
-                    ExAllocatePool2(
-                        POOL_FLAG_NON_PAGED | POOL_FLAG_USE_QUOTA,
-                        Rs->InSize,
-                        POOL_TAG
-                        );
+                    SerialAllocateNonPagedPool(Rs->InSize, TRUE);
 
             if (!reqContext->Type3InputBuffer) {
 
