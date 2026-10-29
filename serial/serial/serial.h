@@ -1684,14 +1684,29 @@ do                                                             \
 // TxN - number of charactes to send.
 //
 //
+// A memory-mapped UART must not use WRITE_PORT_BUFFER_UCHAR: on ARM there is
+// no I/O space and the HAL bugchecks on it. WRITE_REGISTER_BUFFER_UCHAR is no
+// replacement either, as it writes to consecutive addresses, so write each
+// character to the transmit holding register.
+//
 #define WRITE_TRANSMIT_FIFO_HOLDING(Extension, BaseAddress,TransmitChars,TxN)  \
 do                                                             \
 {                                                              \
-    WRITE_PORT_BUFFER_UCHAR(                                   \
-        (BaseAddress)+TRANSMIT_HOLDING_REGISTER,               \
-        (TransmitChars),                                       \
-        (TxN)                                                  \
-        );                                                     \
+    if ((Extension)->AddressSpace == CM_RESOURCE_PORT_MEMORY) {\
+        ULONG _i;                                              \
+        for (_i = 0; _i < (ULONG)(TxN); _i++) {                \
+            WRITE_REGISTER_UCHAR(                              \
+                (BaseAddress)+TRANSMIT_HOLDING_REGISTER,       \
+                (TransmitChars)[_i]                            \
+                );                                             \
+        }                                                      \
+    } else {                                                   \
+        WRITE_PORT_BUFFER_UCHAR(                               \
+            (BaseAddress)+TRANSMIT_HOLDING_REGISTER,           \
+            (TransmitChars),                                   \
+            (TxN)                                              \
+            );                                                 \
+    }                                                          \
 } WHILE (0)
 
 //
